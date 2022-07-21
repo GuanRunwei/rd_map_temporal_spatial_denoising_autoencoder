@@ -19,7 +19,7 @@ class eca_block(nn.Module):
 
     def forward(self, x):
         output = self.avg_pool(x)
-        print("average pool shape:", output.shape)
+        # print("average pool shape:", output.shape)
         output = self.conv(output.squeeze(-1).transpose(-1, -2)).transpose(-1, -2).unsqueeze(-1)
         output = self.sigmoid(output)
 
@@ -34,17 +34,21 @@ class mobile_encoder(nn.Module):
 
         self.conv_init = nn.Conv2d(in_channels=in_channels, out_channels=in_channels*3, kernel_size=1, padding=0,
                                    stride=1)
+        self.dropout_init = nn.Dropout(p=0.05)
 
         self.encoder_first = mobile_backbone_two_stage(in_channels=in_channels*9, out_channels=32)
         self.eca_first = eca_block(channel=32)
+        self.dropout1 = nn.Dropout(p=0.05)
         self.maxpool_first = nn.MaxPool2d((3, 3), stride=(2, 2), padding=(1, 1))
 
         self.encoder_second = mobile_backbone_two_stage(in_channels=32, out_channels=64)
         self.eca_second = eca_block(channel=64)
+        self.dropout2 = nn.Dropout(p=0.05)
         self.maxpool_second = nn.MaxPool2d((3, 3), stride=(2, 2), padding=(1, 1))
 
         self.encoder_third = mobile_backbone_two_stage(in_channels=64, out_channels=out_channels)
         self.eca_third = eca_block(channel=out_channels)
+        self.dropout3 = nn.Dropout(p=0.05)
         self.maxpool_third = nn.MaxPool2d((3, 3), stride=(2, 2), padding=(1, 1))
 
     def forward(self, x):
@@ -53,24 +57,30 @@ class mobile_encoder(nn.Module):
         x_t = self.conv_init(x_t)
         x_t_1 = self.conv_init(x_t_1)
         x_t_2 = self.conv_init(x_t_2)
-        print(x_t.shape)
+        # print(x_t.shape)
 
         x_total = torch.cat([x_t, x_t_1, x_t_2], dim=1)
+        x_total = self.dropout_init(x_total)
 
         x_total = self.encoder_first(x_total)
-        print("x_total.shape:", x_total.shape)
+        # print("x_total.shape:", x_total.shape)
         x_total = self.eca_first(x_total)
+        x_total = self.dropout1(x_total)
         x_total = self.maxpool_first(x_total)
+        x_first_out = x_total
 
         x_total = self.encoder_second(x_total)
         x_total = self.eca_second(x_total)
+        x_total = self.dropout2(x_total)
         x_total = self.maxpool_second(x_total)
+        x_second_out = x_total
 
         x_total = self.encoder_third(x_total)
         x_total = self.eca_third(x_total)
+        x_total = self.dropout3(x_total)
         x_total = self.maxpool_third(x_total)
 
-        return x_total
+        return x_total, x_first_out, x_second_out
 
 
 

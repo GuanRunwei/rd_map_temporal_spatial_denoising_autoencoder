@@ -18,10 +18,10 @@ class RD_Dataset(Dataset):
     def __len__(self):
         return len(self.dataset)
 
-    # 预处理npy文件格式，将sb0和sb的维度从64，128，10272 -> 10272，128，64
-    def _preprocess_map_format(self, data):
-        dataset = torch.as_tensor(data).permute(2, 1, 0)
-        return dataset
+    # # 预处理npy文件格式，将sb0和sb的维度从64，128，10272 -> 10272，128，64
+    # def _preprocess_map_format(self, data):
+    #     dataset = torch.as_tensor(data).permute(2, 1, 0)
+    #     return dataset
 
     def __getitem__(self, index):
         noise_map_t = self.dataset['t'][index]
@@ -48,11 +48,9 @@ def dataset_collate(batch):
     return maps, labels
 
 
-
-
-def get_dataloader(data_path="E:/Big_Datasets/RaDICaL_Denoising/temporal_spatial_data.pkl", train_ratio=0.8,
+def get_dataloader(data_path="E:/Big_Datasets/RaDICaL_Denoising/RD_map_log/RD_map_log/temporal_spatial_data.pkl", train_ratio=0.8,
                    batch_size=8):
-    dataset = RD_Dataset(dataset_path="E:/Big_Datasets/RaDICaL_Denoising/temporal_spatial_data.pkl")
+    dataset = RD_Dataset(dataset_path=data_path)
 
     # --------------- 设置训练、测试、验证数据索引 ----------------- #
     datalen = dataset.__len__()
@@ -62,7 +60,7 @@ def get_dataloader(data_path="E:/Big_Datasets/RaDICaL_Denoising/temporal_spatial
     splitfrac = train_ratio
     split_idx = int(splitfrac * datalen)
     train_idxs = dataidx[:split_idx]
-    valid_idxs = dataidx[split_idx]
+    valid_idxs = dataidx[split_idx:]
 
     testsplit = 0.1
     testidxs = int(testsplit * len(train_idxs))
@@ -75,6 +73,9 @@ def get_dataloader(data_path="E:/Big_Datasets/RaDICaL_Denoising/temporal_spatial
     train_samples = torch.utils.data.SubsetRandomSampler(train_idxs)
     valid_samples = torch.utils.data.SubsetRandomSampler(valid_idxs)
     test_samples = torch.utils.data.SubsetRandomSampler(test_idxs)
+    print(len(train_samples))
+    print(len(valid_samples))
+    print(len(test_samples))
     # ------------------------------------------------------------- #
 
     # --------------- 训练、测试、验证dataloader ----------------- #
@@ -86,12 +87,17 @@ def get_dataloader(data_path="E:/Big_Datasets/RaDICaL_Denoising/temporal_spatial
 
 
 if __name__ == '__main__':
-    dataset = RD_Dataset(dataset_path="E:/Big_Datasets/RaDICaL_Denoising/temporal_spatial_data.pkl")
-
-    dataloader = DataLoader(dataset=dataset, batch_size=4, collate_fn=dataset_collate)
-    maps, label = next(iter(dataloader))
-
-    print(maps[0].shape)
-    print(len(maps))
+    trainloader, testloader, validloader = get_dataloader(data_path="E:/Big_Datasets/RaDICaL_Denoising/temporal_spatial_data.pkl", batch_size=16,
+                                                          train_ratio=0.8)
+    print("trainloader size:", len(trainloader.dataset))
+    print("validloader size:", len(validloader.dataset))
+    print("testloader size:", len(testloader.dataset))
+    # dataset = RD_Dataset(dataset_path="E:/Big_Datasets/RaDICaL_Denoising/temporal_spatial_data.pkl")
+    #
+    # dataloader = DataLoader(dataset=dataset, batch_size=4, collate_fn=dataset_collate)
+    # maps, label = next(iter(dataloader))
+    #
+    # print(maps)
+    # print(label)
     # print(maps[1][0])
     # print(maps[2][0])
