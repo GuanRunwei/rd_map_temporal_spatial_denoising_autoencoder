@@ -29,6 +29,7 @@ if __name__ == '__main__':
     train_data_read = pd.read_pickle(
         "E:/Big_Datasets/RaDICaL_Denoising/RD_map_log/RD_map_log/temporal_spatial_data.pkl")
     random_index = random.randint(20000, 23966)
+    print("random index:", random_index)
     example_data = train_data_read.loc[random_index]
     map_t, map_t_1, map_t_2, gt = example_data['t'], example_data['t-1'], example_data['t-2'], \
                                   example_data['gt']
