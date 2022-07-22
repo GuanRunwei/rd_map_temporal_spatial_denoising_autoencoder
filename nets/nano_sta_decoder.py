@@ -32,7 +32,20 @@ class nano_sta(nn.Module):
 
         self.deconv3 = de_mobile_backbone_two_stage(in_channels=32, out_channels=decoder_out_channels)
 
-        self.activation = nn.Sigmoid()
+        self.activation = nn.ReLU()
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)
 
     def forward(self, x):
         encoder_out, encoder_first_out, encoder_second_out = self.nano_sta_encoder(x)

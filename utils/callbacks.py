@@ -15,63 +15,42 @@ from PIL import Image
 from tqdm import tqdm
 
 
-class LossHistory():
-    def __init__(self, log_dir, model, input_shape):
-        self.log_dir = log_dir
-        self.losses = []
-        self.val_loss = []
+def loss_save(loss_array, mode='train', model=None, model_name=None):
+    now = datetime.datetime.now()
 
-        os.makedirs(self.log_dir)
-        self.writer = SummaryWriter(self.log_dir)
-        try:
-            dummy_input = torch.randn(2, 3, input_shape[0], input_shape[1])
-            self.writer.add_graph(model, dummy_input)
-        except:
-            pass
+    folder = os.path.exists("logs/"+f"loss{now.year}{now.month}{now.day}{now.hour}{now.minute}")
+    if not folder:
+        os.makedirs("logs/" + f"loss{now.year}{now.month}{now.day}{now.hour}{now.minute}")
 
-    def append_loss(self, epoch, loss, val_loss):
-        if not os.path.exists(self.log_dir):
-            os.makedirs(self.log_dir)
+    save_dir = "logs/"+f"loss{now.year}{now.month}{now.day}{now.hour}{now.minute}"
+    if mode == 'train':
+        save_path = os.path.join(save_dir, f"train_loss{now.year}{now.month}{now.day}{now.hour}{now.minute}.txt")
+        plot_array = None
+        with open(save_path, encoding='utf8', mode='w') as f:
+            f.write(''.join(str(i)+"\n" for i in loss_array))
+        with open(save_path, encoding='utf8', mode='r') as f:
+            plot_array = [float(item.strip()) for item in f.readlines()]
+        print(plot_array)
+        plt.plot(range(len(plot_array)), plot_array)
+        plt.xlabel("epochs")
+        plt.ylabel("mse loss")
+        plt.title("MSE Loss in Training")
+        plt.savefig(os.path.join(save_dir, f"train_loss{now.year}{now.month}{now.day}{now.hour}{now.minute}.png"))
 
-        self.losses.append(loss)
-        self.val_loss.append(val_loss)
+    if mode == 'valid':
+        save_path = os.path.join(save_dir, f"valid_loss{now.year}{now.month}{now.day}{now.hour}{now.minute}.txt")
+        torch.save(model.state_dict(), os.path.join(save_dir, model_name))
+        plot_array = None
+        with open(save_path, encoding='utf8', mode='w') as f:
+            f.write(''.join(str(i)+"\n" for i in loss_array))
+        with open(save_path, encoding='utf8', mode='r') as f:
+            plot_array = [float(item.strip()) for item in f.readlines()]
+        plt.plot(range(len(plot_array)), plot_array)
+        plt.xlabel("epochs")
+        plt.ylabel("mse loss")
+        plt.title("MSE Loss in Validation")
+        plt.savefig(os.path.join(save_dir, f"valid_loss{now.year}{now.month}{now.day}{now.hour}{now.minute}.png"))
 
-        with open(os.path.join(self.log_dir, "epoch_loss.txt"), 'a') as f:
-            f.write(str(loss))
-            f.write("\n")
-        with open(os.path.join(self.log_dir, "epoch_val_loss.txt"), 'a') as f:
-            f.write(str(val_loss))
-            f.write("\n")
 
-        self.writer.add_scalar('loss', loss, epoch)
-        self.writer.add_scalar('val_loss', val_loss, epoch)
-        self.loss_plot()
-
-    def loss_plot(self):
-        iters = range(len(self.losses))
-
-        plt.figure()
-        plt.plot(iters, self.losses, 'red', linewidth=2, label='train loss')
-        plt.plot(iters, self.val_loss, 'coral', linewidth=2, label='val loss')
-        try:
-            if len(self.losses) < 25:
-                num = 5
-            else:
-                num = 15
-
-            plt.plot(iters, scipy.signal.savgol_filter(self.losses, num, 3), 'green', linestyle='--', linewidth=2,
-                     label='smooth train loss')
-            plt.plot(iters, scipy.signal.savgol_filter(self.val_loss, num, 3), '#8B4513', linestyle='--', linewidth=2,
-                     label='smooth val loss')
-        except:
-            pass
-
-        plt.grid(True)
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
-        plt.legend(loc="upper right")
-
-        plt.savefig(os.path.join(self.log_dir, "epoch_loss.png"))
-
-        plt.cla()
-        plt.close("all")
+if __name__ == '__main__':
+    loss_save([5,4,3,2,1], mode='train')

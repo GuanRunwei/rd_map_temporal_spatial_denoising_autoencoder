@@ -36,18 +36,18 @@ class de_mobile_backbone_stage1(nn.Module):
 
         # --------------------------------- 中间分支 --------------------------------- #
         output_center = self.ds_basic_deconv(x_center)
-        # output_center = self.batchnorm_center(output_center)
+        output_center = self.batchnorm_center(output_center)
         # print("中间分支:", output_center.shape)
         # ---------------------------------------------------------------------------- #
 
         # --------------------------------- 左侧分支 --------------------------------- #
         output_left = self.conv_left(x_left)
-        # output_left = self.batchnorm_left(output_left)
+        output_left = self.batchnorm_left(output_left)
         # print("左侧分支:", output_left.shape)
         # ---------------------------------------------------------------------------- #
 
         # --------------------------------- 右侧分支 --------------------------------- #
-        output_right = x_right
+        output_right = self.batchnorm_right(x_right)
         # print("右侧分支:", output_right.shape)
         # ---------------------------------------------------------------------------- #
 
@@ -83,11 +83,11 @@ class de_mobile_backbone_stage2(nn.Module):
         x_right = x
 
         output_left = self.conv_left(x_left)
-        # output_left = self.batchnorm_left(output_left)
+        output_left = self.batchnorm_left(output_left)
         # print("deconv 左侧分支:", output_left.shape)
 
         output_right = self.conv_right(x_right)
-        # output_right = self.batchnorm_right(output_right)
+        output_right = self.batchnorm_right(output_right)
         # print("deconv 右侧分支:", output_right.shape)
 
         output = output_left + output_right

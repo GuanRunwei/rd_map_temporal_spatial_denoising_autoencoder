@@ -40,7 +40,7 @@ class ds_basic_deconv(nn.Module):
     def forward(self, x):
         output = self.ds_conv(x)
         output = self.activation(output)
-        # output = self.batchnorm(output)
+        output = self.batchnorm(output)
         return output
 
 

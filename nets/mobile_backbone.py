@@ -35,18 +35,18 @@ class mobile_backbone_stage1(nn.Module):
 
         # --------------------------------- 中间分支 --------------------------------- #
         output_center = self.ds_basic_conv(x_center)
-        # output_center = self.batchnorm_center(output_center)
+        output_center = self.batchnorm_center(output_center)
         # print("中间分支:", output_center.shape)
         # ---------------------------------------------------------------------------- #
 
         # --------------------------------- 左侧分支 --------------------------------- #
         output_left = self.conv_left(x_left)
-        # output_left = self.batchnorm_left(output_left)
+        output_left = self.batchnorm_left(output_left)
         # print("左侧分支:", output_left.shape)
         # ---------------------------------------------------------------------------- #
 
         # --------------------------------- 右侧分支 --------------------------------- #
-        output_right = x_right
+        output_right = self.batchnorm_right(x_right)
         # print("右侧分支:", output_right.shape)
         # ---------------------------------------------------------------------------- #
 
@@ -58,18 +58,20 @@ class mobile_backbone_stage1(nn.Module):
 
 
 class mobile_backbone_stage2(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, kernel_size=1, stride=1, padding=0):
         super(mobile_backbone_stage2, self).__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
 
         # ------------------------------------- 2分支->左侧分支 ------------------------------------- #
-        self.conv_left = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=1)
+        self.conv_left = ds_basic_conv(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size,
+                                       stride=stride, padding=padding)
         self.batchnorm_left = nn.BatchNorm2d(out_channels)
         # ------------------------------------------------------------------------------------------- #
 
         # ------------------------------------- 2分支->右侧分支 ------------------------------------- #
-        self.conv_right = ds_basic_conv(in_channels=in_channels, out_channels=out_channels)
+        self.conv_right = ds_basic_conv(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size,
+                                        stride=stride, padding=padding)
         self.batchnorm_right = nn.BatchNorm2d(out_channels)
         # ------------------------------------------------------------------------------------------- #
 
@@ -80,10 +82,12 @@ class mobile_backbone_stage2(nn.Module):
         x_right = x
 
         output_left = self.conv_left(x_left)
-        # output_left = self.batchnorm_left(output_left)
+        output_left = self.batchnorm_left(output_left)
+        # print("mobile backbone stage2 left shape:", output_left.shape)
 
         output_right = self.conv_right(x_right)
-        # output_right = self.batchnorm_right(output_right)
+        output_right = self.batchnorm_right(output_right)
+        # print("mobile backbone stage2 right shape:", output_right.shape)
 
         output = output_left + output_right
 
@@ -93,12 +97,13 @@ class mobile_backbone_stage2(nn.Module):
 
 
 class mobile_backbone_two_stage(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, kernel_size=1, stride=1, padding=0):
         super(mobile_backbone_two_stage, self).__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.conv_stage1 = mobile_backbone_stage1(in_channels=in_channels)
-        self.conv_stage2 = mobile_backbone_stage2(in_channels=in_channels, out_channels=out_channels)
+        self.conv_stage2 = mobile_backbone_stage2(in_channels=in_channels, out_channels=out_channels,
+                                                  kernel_size=kernel_size, stride=stride, padding=padding)
 
     def forward(self, x):
         output = self.conv_stage1(x)
