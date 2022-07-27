@@ -24,11 +24,11 @@ class nano_sta(nn.Module):
         # ----------------------- Decoder ------------------------- #
         self.deconv1 = de_mobile_backbone_two_stage(in_channels=encoder_out_channels, out_channels=64)
         self.de_eca_first = eca_block(channel=64)
-        self.dropout1 = nn.Dropout(p=0.05)
+        self.dropout1 = nn.Dropout(p=0.01)
 
         self.deconv2 = de_mobile_backbone_two_stage(in_channels=64, out_channels=32)
         self.de_eca_second = eca_block(channel=32)
-        self.dropout2 = nn.Dropout(p=0.05)
+        self.dropout2 = nn.Dropout(p=0.01)
 
         self.deconv3 = de_mobile_backbone_two_stage(in_channels=32, out_channels=decoder_out_channels)
 
@@ -37,7 +37,7 @@ class nano_sta(nn.Module):
     def _initialize_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='leaky_relu')
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0)
             elif isinstance(m, nn.BatchNorm2d):

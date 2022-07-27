@@ -36,7 +36,7 @@ def get_fps(input, model, test_times=100):
 
 
 if __name__ == '__main__':
-    device = 'cuda:0'
+    device = 'cpu'
     input = torch.randn(3, 1, 1, 128, 64).to(device)
 
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     print("========== clever mode ==========")
     print("macs:", macs)
     print("params:", params)
-    latency, fps = get_fps(input=input, model=nano_sta_model, test_times=500)
+    latency, fps = get_fps(input=input, model=nano_sta_model, test_times=200)
     print("FPS:", fps)
     print("latency:", latency * 1000, " ms")
 

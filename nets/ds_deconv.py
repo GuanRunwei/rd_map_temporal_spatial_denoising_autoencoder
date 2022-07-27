@@ -34,13 +34,13 @@ class ds_basic_deconv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(ds_basic_deconv, self).__init__()
         self.ds_conv = depth_seperate_deconv(in_channels=in_channels, out_channels=out_channels)
-        self.activation = nn.ReLU()
         self.batchnorm = nn.BatchNorm2d(out_channels)
+        self.activation = nn.ReLU()
 
     def forward(self, x):
         output = self.ds_conv(x)
-        output = self.activation(output)
         output = self.batchnorm(output)
+        output = self.activation(output)
         return output
 
 

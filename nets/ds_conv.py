@@ -35,11 +35,11 @@ class ds_basic_conv(nn.Module):
         super(ds_basic_conv, self).__init__()
         self.ds_conv = depth_seperate_conv(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size,
                                            stride=stride, padding=padding)
-        self.activation = nn.ReLU(inplace=False)
         self.batchnorm = nn.BatchNorm2d(out_channels)
+        self.activation = nn.ReLU(inplace=False)
 
     def forward(self, x):
         output = self.ds_conv(x)
-        output = self.activation(output)
         output = self.batchnorm(output)
+        output = self.activation(output)
         return output

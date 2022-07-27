@@ -12,6 +12,8 @@ from nets.nano_sta_decoder import nano_sta
 from torch.utils.tensorboard import SummaryWriter
 from utils.callbacks import loss_save
 import datetime
+import matplotlib
+matplotlib.use('TkAgg')  # 大小写无所谓 tkaGg ,TkAgg 都行
 import matplotlib.pyplot as plt
 import random
 import os
@@ -19,7 +21,7 @@ import os
 
 if __name__ == '__main__':
 
-    model_path = "models/val_loss_0.22674559114966542.pth"
+    model_path = "models/val_loss_0.16928985132835805.pth"
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     nano_sta_model = nano_sta(encoder_in_channels=1, encoder_out_channels=128, decoder_out_channels=1).to(device)
@@ -59,6 +61,7 @@ if __name__ == '__main__':
 
     plt.imshow(output_map)
     now = datetime.datetime.now()
-    plt.savefig(f"images/test{now.year}{now.month}{now.day}{now.hour}{now.minute}{now.second}.png")
+    plt.savefig(f"images/test_{random_index}_{now.year}{now.month}{now.day}{now.hour}{now.minute}{now.second}.png")
+    plt.show()
 
 

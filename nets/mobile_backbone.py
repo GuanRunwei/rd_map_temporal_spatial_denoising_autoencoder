@@ -29,6 +29,7 @@ class mobile_backbone_stage1(nn.Module):
         self.activation = nn.ReLU()
 
     def forward(self, x):
+        x_res = x
         x_left = x
         x_right = x
         x_center = x
@@ -54,7 +55,7 @@ class mobile_backbone_stage1(nn.Module):
 
         output = self.activation(output)
 
-        return output
+        return output, x_res
 
 
 class mobile_backbone_stage2(nn.Module):
@@ -104,8 +105,12 @@ class mobile_backbone_two_stage(nn.Module):
         self.conv_stage1 = mobile_backbone_stage1(in_channels=in_channels)
         self.conv_stage2 = mobile_backbone_stage2(in_channels=in_channels, out_channels=out_channels,
                                                   kernel_size=kernel_size, stride=stride, padding=padding)
+        self.long_res = ds_basic_conv(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size,
+                                      stride=stride, padding=padding)
 
     def forward(self, x):
-        output = self.conv_stage1(x)
+        output, output_res = self.conv_stage1(x)
+        output_long_res = self.long_res(output_res)
         output = self.conv_stage2(output)
+        output = output + output_long_res
         return output

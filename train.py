@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # -------------------------------- 超参数 -------------------------------- #
     data_path = "E:/Big_Datasets/RaDICaL_Denoising/RD_map_log/RD_map_log/temporal_spatial_data.pkl"
     batch_size = 16
-    train_ratio = 0.9
+    train_ratio = 0.92
     cuda = True
     optimizer_name = 'adam'
     scheduler_name = 'step'
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     if scheduler_name == "cosine":
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, eta_min=learning_rate * 0.01, T_max=epochs/10)
     elif scheduler_name == "step":
-        scheduler = optim.lr_scheduler.StepLR(optimizer=optimizer, gamma=0.85, step_size=1)
+        scheduler = optim.lr_scheduler.StepLR(optimizer=optimizer, gamma=0.9, step_size=1)
     # -------------------------------------------------------------------------- #
 
     # ------------------------------ Start Training ---------------------------- #
