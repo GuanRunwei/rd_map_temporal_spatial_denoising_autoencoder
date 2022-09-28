@@ -39,7 +39,7 @@ def plot_denoised_rd_maps(denoised_rd_maps):
 
 
 def export_rd_map():
-    model_path = "models/nano_sta.pth"
+    model_path = "models/radar_stda.pth"
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     model = nano_sta(encoder_in_channels=1, encoder_out_channels=128, decoder_out_channels=1).to('cpu')
     model.load_state_dict(torch.load(model_path))
