@@ -1,0 +1,9 @@
+matplotlib==3.5.2
+numpy==1.22.4+mkl
+pandas==1.4.2
+Pillow==9.2.0
+scipy==1.8.1
+thop==0.0.31.post2005241907
+torch==1.9.1+cu111
+torchsummary==1.5.1
+tqdm==4.64.0
