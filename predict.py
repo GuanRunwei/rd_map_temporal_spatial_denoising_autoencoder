@@ -13,7 +13,7 @@ from torch.utils.tensorboard import SummaryWriter
 from utils.callbacks import loss_save
 import datetime
 import matplotlib
-matplotlib.use('TkAgg')  # 大小写无所谓 tkaGg ,TkAgg 都行
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import random
 import os
