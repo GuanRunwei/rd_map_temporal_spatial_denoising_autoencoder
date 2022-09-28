@@ -9,8 +9,6 @@ from tqdm import tqdm
 from tqdm import trange
 from utils.dataloader import get_dataloader
 from nets.nano_sta_decoder import nano_sta
-from nets.AE import AECNet
-from nets.CAE import CAE
 from torch.utils.tensorboard import SummaryWriter
 from utils.callbacks import loss_save
 import datetime
@@ -41,10 +39,9 @@ def plot_denoised_rd_maps(denoised_rd_maps):
 
 
 def export_rd_map():
-    model_path = "models/cae.pth"
+    model_path = "models/nano_sta.pth"
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-    # model = nano_sta(encoder_in_channels=1, encoder_out_channels=128, decoder_out_channels=1).to('cpu')
-    model = AECNet(hidden_dim=100, output_dim=100, input_dim=100)
+    model = nano_sta(encoder_in_channels=1, encoder_out_channels=128, decoder_out_channels=1).to('cpu')
     model.load_state_dict(torch.load(model_path))
     model.eval()
     final_results = []
@@ -87,7 +84,7 @@ def export_rd_map():
 
 if __name__ == '__main__':
 
-    model_path = "models/val_loss_0.16928985132835805.pth"
+    model_path = "models/nano_sta.pth"
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     nano_sta_model = nano_sta(encoder_in_channels=1, encoder_out_channels=128, decoder_out_channels=1).to(device)
@@ -98,7 +95,7 @@ if __name__ == '__main__':
         "E:/Big_Datasets/RaDICaL_Denoising/RD_map_log/RD_map_log/temporal_spatial_data.pkl")
     random_index = random.randint(20000, 23966)
     print("random index:", 0)
-    example_data = train_data_read.loc[21186]
+    example_data = train_data_read.loc[random_index]
     map_t, map_t_1, map_t_2, gt = example_data['t'], example_data['t-1'], example_data['t-2'], \
                                   example_data['gt']
 
