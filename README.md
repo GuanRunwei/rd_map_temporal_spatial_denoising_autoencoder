@@ -10,11 +10,11 @@
 
 ## Implementation
 
-   - open train.py -> change the variable data_path to your own path
-   - conda create -n radarstda
-   - conda activate radarstda
-   - pip install requirements.txt
-   - python train.py
+      open train.py -> change the variable **data_path** to your own path
+      conda create -n radarstda
+      conda activate radarstda
+      pip install requirements.txt
+      python train.py
    
 ## Dataset
 
