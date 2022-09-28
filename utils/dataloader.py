@@ -87,17 +87,27 @@ def get_dataloader(data_path="E:/Big_Datasets/RaDICaL_Denoising/RD_map_log/RD_ma
 
 
 if __name__ == '__main__':
-    trainloader, testloader, validloader = get_dataloader( batch_size=16,
+    trainloader, testloader, validloader = get_dataloader( batch_size=1,
                                                           train_ratio=0.8)
-    print("trainloader size:", len(trainloader.dataset))
-    print("validloader size:", len(validloader.dataset))
-    print("testloader size:", len(testloader.dataset))
+    # print("trainloader size:", len(trainloader.dataset))
+    # print("validloader size:", len(validloader.dataset))
+    print("testloader size:", testloader.dataset)
     # dataset = RD_Dataset(dataset_path="E:/Big_Datasets/RaDICaL_Denoising/temporal_spatial_data.pkl")
     #
     # dataloader = DataLoader(dataset=dataset, batch_size=4, collate_fn=dataset_collate)
-    maps, label = next(iter(trainloader))
+    noise_map = []
+    gt_map = []
+    for maps, labels in iter(testloader):
+        for map in maps:
+            noise_map.append(map.numpy())
+        for label in labels:
+            gt_map.append(label.numpy())
 
-    print(maps.shape)
-    print(label)
-    print(maps[1][0])
-    print(maps[2][0])
+    # print(maps.shape)
+    # print(label.shape)
+    # print(maps[1][0])
+    # print(maps[2][0])
+    noise_map = np.array(noise_map).squeeze(1).squeeze(1)
+    gt_map = np.array(gt_map).squeeze(1)
+    print(noise_map.shape)
+    print(gt_map.shape)

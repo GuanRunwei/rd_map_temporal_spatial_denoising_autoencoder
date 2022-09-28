@@ -27,13 +27,13 @@ if __name__ == '__main__':
     optimizer_name = 'adam'
     scheduler_name = 'step'
     learning_rate = 0.001
-    weight_decay = 1e-3
+    weight_decay = 5e-4
     epochs = 100
     criterion = nn.MSELoss()
     # ------------------------------------------------------------------------ #
 
     # ------------------------------- 训练设备 --------------------------------- #
-    device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     # -------------------------------------------------------------------------- #
 
     # --------------------------------- SEED ------------------------------------- #
