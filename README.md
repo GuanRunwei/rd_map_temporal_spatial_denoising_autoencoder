@@ -1,6 +1,6 @@
 # Radar-STDA
 
-## Radar-STDA: A High-efficiency Spatial-Temporal Denoising Autoencoder for Interference Mitigation of FMCW Radars
+## Radar-STDA: A High-Performance Spatial-Temporal Denoising Autoencoder for Interference Mitigation of FMCW Radars
 
 <img src="https://github.com/GuanRunwei/rd_map_temporal_spatial_denoising_autoencoder/blob/main/images/test2022726194946.png" width = "700" height = "360" alt="Interference mitigation example 1" align=center />
 
